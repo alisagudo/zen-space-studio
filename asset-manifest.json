@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/zen-space-studio/static/css/main.a773c71f.css",
+    "main.js": "/zen-space-studio/static/js/main.147a02ec.js",
+    "static/js/453.eb570f4f.chunk.js": "/zen-space-studio/static/js/453.eb570f4f.chunk.js",
+    "index.html": "/zen-space-studio/index.html",
+    "main.a773c71f.css.map": "/zen-space-studio/static/css/main.a773c71f.css.map",
+    "main.147a02ec.js.map": "/zen-space-studio/static/js/main.147a02ec.js.map",
+    "453.eb570f4f.chunk.js.map": "/zen-space-studio/static/js/453.eb570f4f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a773c71f.css",
+    "static/js/main.147a02ec.js"
+  ]
+}
