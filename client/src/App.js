@@ -1,8 +1,20 @@
+import { Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Avaleht from './pages/Avaleht'
+import Teenused from './pages/Teenused'
+import Tunniplaan from './pages/Tunniplaan'
+import Kontakt from './pages/Kontakt'
+
 function App() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">Zen Space Studio 🌿</h1>
-      <p className="text-gray-700 mt-2">Tailwind CSS Test</p>
+    <div className="App">
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Avaleht />} />
+        <Route path="/schedule" element={<Teenused />} />
+        <Route path="/booking" element={<Tunniplaan />} />
+        <Route path="/contact" element={<Kontakt />} />
+      </Routes>
     </div>
   )
 }
