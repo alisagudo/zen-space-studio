@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Avaleht from './pages/Avaleht'
+import Avaleht from './pages/Avaleht.tsx'
 import Teenused from './pages/Teenused'
 import Tunniplaan from './pages/Tunniplaan'
 import Kontakt from './pages/Kontakt'
