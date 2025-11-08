@@ -4,7 +4,7 @@ import Avaleht from './pages/Avaleht'
 import { Booking } from './pages/Booking'
 import Teenused from './pages/Teenused'
 import Tunniplaan from './pages/Tunniplaan'
-import Kontakt from './pages/Kontakt'
+import { Contact } from './pages/Kontakt'
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <Route path="/teenused" element={<Teenused />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/tunniplaan" element={<Tunniplaan />} />
-        <Route path="/contact" element={<Kontakt />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </div>
   )
