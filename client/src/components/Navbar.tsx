@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { Button } from "./ui/Button"
 import { Menu, X } from "lucide-react"
 import logo from "../assets/zen-space-logo.PNG"
@@ -7,40 +7,48 @@ import logo from "../assets/zen-space-logo.PNG"
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // 👇 Aktiivne link on nüüd must (mitte sinine)
+  const linkClasses = ({ isActive }: { isActive: boolean }) =>
+    `transition-colors ${
+      isActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
+    }`
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <Link to="/">
+            <NavLink to="/" className="flex items-center gap-3">
               <img src={logo} alt="Zen Space Studio" className="h-14 w-auto" />
-            </Link>
-            <div className="flex flex-col leading-tight">
-              <span className="text-gray-800">Zen Space</span>
-              <span className="text-gray-800">Studio</span>
-            </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-gray-800 font-semibold">Zen Space</span>
+                <span className="text-gray-800">Studio</span>
+              </div>
+            </NavLink>
           </div>
 
-          {/* Desktop nav */}
+          {/* Desktop navigation */}
           <div className="hidden md:flex items-center gap-12">
             <nav className="flex items-center gap-8">
-              <Link to="/" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <NavLink to="/" className={linkClasses}>
                 Avaleht
-              </Link>
-              <Link to="/teenused" className="text-gray-600 hover:text-gray-900 transition-colors">
+              </NavLink>
+              <NavLink to="/teenused" className={linkClasses}>
                 Teenused
-              </Link>
-              <Link to="/tunniplaan" className="text-gray-600 hover:text-gray-900 transition-colors">
+              </NavLink>
+              <NavLink to="/tunniplaan" className={linkClasses}>
                 Tunniplaan
-              </Link>
-              <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">
+              </NavLink>
+              <NavLink to="/contact" className={linkClasses}>
                 Kontakt
-              </Link>
+              </NavLink>
             </nav>
 
             <Button asChild>
-              <Link to="/booking">Broneeri ruum</Link>
+              <NavLink to="/booking" className="text-white">
+                Broneeri ruum
+              </NavLink>
             </Button>
           </div>
 
@@ -57,38 +65,42 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <nav className="flex flex-col gap-4">
-              <Link
+              <NavLink
                 to="/"
+                className={linkClasses}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Avaleht
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/teenused"
+                className={linkClasses}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Teenused
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/tunniplaan"
+                className={linkClasses}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Tunniplaan
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/contact"
+                className={linkClasses}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Kontakt
-              </Link>
+              </NavLink>
               <Button className="w-full" asChild>
-                <Link to="/booking" onClick={() => setMobileMenuOpen(false)}>
+                <NavLink
+                  to="/booking"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-white"
+                >
                   Broneeri ruum
-                </Link>
+                </NavLink>
               </Button>
             </nav>
           </div>
