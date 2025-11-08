@@ -1,16 +1,17 @@
 {
   "files": {
-    "main.css": "/zen-space-studio/static/css/main.73be6084.css",
-    "main.js": "/zen-space-studio/static/js/main.751cf7a6.js",
+    "main.css": "/zen-space-studio/static/css/main.4a4b545c.css",
+    "main.js": "/zen-space-studio/static/js/main.8d63c7c2.js",
     "static/js/453.eb570f4f.chunk.js": "/zen-space-studio/static/js/453.eb570f4f.chunk.js",
     "static/media/zen-space.jpg": "/zen-space-studio/static/media/zen-space.539623bbeb9bffdbd842.jpg",
+    "static/media/zen-space-logo.PNG": "/zen-space-studio/static/media/zen-space-logo.39d6613a15adb39b04b3.PNG",
     "index.html": "/zen-space-studio/index.html",
-    "main.73be6084.css.map": "/zen-space-studio/static/css/main.73be6084.css.map",
-    "main.751cf7a6.js.map": "/zen-space-studio/static/js/main.751cf7a6.js.map",
+    "main.4a4b545c.css.map": "/zen-space-studio/static/css/main.4a4b545c.css.map",
+    "main.8d63c7c2.js.map": "/zen-space-studio/static/js/main.8d63c7c2.js.map",
     "453.eb570f4f.chunk.js.map": "/zen-space-studio/static/js/453.eb570f4f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.73be6084.css",
-    "static/js/main.751cf7a6.js"
+    "static/css/main.4a4b545c.css",
+    "static/js/main.8d63c7c2.js"
   ]
 }
