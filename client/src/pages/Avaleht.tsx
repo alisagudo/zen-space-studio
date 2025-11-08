@@ -19,7 +19,7 @@ export default function Avaleht() {
                 <Link to="/booking">Broneeri ruum</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/schedule">Vaata tunniplaani</Link>
+                <Link to="/tunniplaan">Vaata tunniplaani</Link>
               </Button>
             </div>
           </div>
