@@ -7,7 +7,6 @@ import logo from "../assets/zen-space-logo.PNG"
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // 👇 Aktiivne link on nüüd must (mitte sinine)
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
     `transition-colors ${
       isActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
