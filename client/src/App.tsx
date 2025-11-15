@@ -6,6 +6,7 @@ import { Services } from './pages/Teenused'
 import Tunniplaan from './pages/Tunniplaan'
 import { Contact } from './pages/Kontakt'
 import { Footer } from './pages/Footer' 
+import './styles/progress.css';
 
 function App() {
   return (
