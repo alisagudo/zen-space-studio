@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useState } from "react";
 import { Calendar as CalendarIcon, Clock, Users, Mail, Phone, User } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from 'react-router-dom'
 
 const bookings = [
   {
@@ -214,16 +215,12 @@ export function Booking() {
             Kontrollige ruumi kättesaadavust ja täitke broneerimise vorm
           </p>
           <div className="mt-6">
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => {
-                sessionStorage.setItem('zenSpaceTargetTab', 'space');
-                window.location.hash = '#services';
-              }}
-            >
-              Tutvu stuudio ruumi võimalustega
-            </Button>
+            <Link to="/services/space">
+              <Button variant="outline" size="lg">
+                Tutvu stuudio ruumi võimalustega
+              </Button>
+            </Link>
+
           </div>
         </div>
 

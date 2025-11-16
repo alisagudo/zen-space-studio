@@ -1,25 +1,33 @@
-import { Button } from '../components/ui/Button'
+import { Button } from "../components/ui/Button";
 import { Link } from 'react-router-dom'
 import homeImage from '../assets/zen-space.jpg'
 
-export default function Avaleht() {
+export function Avaleht () {
   return (
     <section id="home" className="pt-20 min-h-screen flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center space-y-8 mb-12">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl text-gray-800">Zen Space Studio</h1>
-
+            <h1 className="text-5xl md:text-6xl lg:text-7xl text-gray-800">
+              Zen Space Studio
+            </h1>
+            
             <p className="text-xl text-gray-600">
               Calm your mind, nourish your soul & connect with your body.
             </p>
-
+            
+            <div className="flex justify-center">
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/teenused">Mis on Zen Space?</Link>
+              </Button>
+            </div>
+            
             <div className="flex flex-wrap gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link to="/booking">Broneeri ruum</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/tunniplaan">Vaata tunniplaani</Link>
+                <Link to="/tunniplaan">Tule trenni/üritusele</Link>
               </Button>
             </div>
           </div>
@@ -35,5 +43,7 @@ export default function Avaleht() {
         </div>
       </div>
     </section>
-  )
+  );
 }
+
+export default Avaleht;

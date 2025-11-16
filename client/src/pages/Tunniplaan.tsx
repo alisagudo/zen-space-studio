@@ -8,6 +8,7 @@ import { Button } from "../components/ui/Button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Link } from 'react-router-dom'
 
 const bookings = [
   {
@@ -111,16 +112,11 @@ export function Tunniplaan () {
             Vaata meie treeningute ja ürituste ajakava ning registreeru
           </p>
           <div className="mt-6">
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => {
-                sessionStorage.setItem('zenSpaceTargetTab', 'activities');
-                window.location.hash = '#services';
-              }}
-            >
-              Avasta, mida siin korraldatakse!
+            <Link to="/services/activities">
+              <Button variant="outline" size="lg">
+                Avasta, mida siin korraldatakse!
             </Button>
+          </Link>
           </div>
         </div>
 

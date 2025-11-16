@@ -17,6 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Avaleht />} />
           <Route path="/teenused" element={<Services />} />
+          <Route path="/services/activities" element={<Services />} />
+          <Route path="/services/space" element={<Services />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/tunniplaan" element={<Tunniplaan />} />
           <Route path="/contact" element={<Contact />} />

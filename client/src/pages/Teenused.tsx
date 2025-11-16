@@ -3,33 +3,23 @@ import { Button } from "../components/ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
 import { Users, Calendar, Clock, Check, Sparkles, Heart, Music, Coffee } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Link } from 'react-router-dom'
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 export function Services() {
-  const [activeTab, setActiveTab] = useState("space");
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Loe sessionStorage-st soovitud tabi
-    const handleTabChange = () => {
-      const targetTab = sessionStorage.getItem('zenSpaceTargetTab');
-      if (targetTab === "activities" || targetTab === "space") {
-        setActiveTab(targetTab);
-        sessionStorage.removeItem('zenSpaceTargetTab'); // Kustuta pärast kasutamist
-      }
-    };
+  // Mis tab on URL-i järgi?
+  const activeTab = location.pathname.includes("activities")
+    ? "activities"
+    : "space";
 
-    // Kontrolli kohe ja ka kui section muutub
-    handleTabChange();
-    
-    // Lisa hash muutuse listener
-    const hashChangeListener = () => {
-      if (window.location.hash === '#services') {
-        handleTabChange();
-      }
-    };
-    
-    window.addEventListener("hashchange", hashChangeListener);
-    return () => window.removeEventListener("hashchange", hashChangeListener);
-  }, []);
+  // Kui kasutaja vahetab tabi, uuendame URL-i
+  const handleTabChange = (value: string) => {
+    navigate(`/services/${value}`);
+  };
 
   return (
     <section id="services" className="py-20 bg-gray-50">
@@ -43,7 +33,7 @@ export function Services() {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-2 mb-12 h-auto rounded-full p-1.5">
             <TabsTrigger value="space" className="h-auto py-2.5 flex flex-col gap-0.5 rounded-full">
               <span>Tutvu stuudio</span>
@@ -114,7 +104,7 @@ export function Services() {
                 </div>
 
                 <Button size="lg" className="mt-4" asChild>
-                  <a href="#availability">Broneeri ruum</a>
+                  <Link to="/booking">Broneeri ruum</Link>
                 </Button>
               </div>
 
