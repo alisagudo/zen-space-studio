@@ -246,27 +246,27 @@ export function Booking() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  className="rounded-md border"
-                  modifiers={{
-                    fullyBooked: (date) => isDateFullyBooked(date),
-                    partiallyBooked: (date) => isDatePartiallyBooked(date),
-                    available: (date) =>
-                      getBookingsCountForDate(date) === 0 && date >= new Date(),
-                  }}
-                  modifiersClassNames={{
-                    fullyBooked:
-                      "bg-red-100 text-red-900 hover:bg-red-200",
-                    partiallyBooked:
-                      "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
-                    available:
-                      "bg-green-100 text-green-900 hover:bg-green-200",
-                  }}
-                />
+                <div className="w-full max-w-[320px]">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => date && setSelectedDate(date)}
+                    className="rounded-md border w-full"
+                    modifiers={{
+                      fullyBooked: (date) => isDateFullyBooked(date),
+                      partiallyBooked: (date) => isDatePartiallyBooked(date),
+                      available: (date) =>
+                        getBookingsCountForDate(date) === 0 && date >= new Date(),
+                    }}
+                    modifiersClassNames={{
+                      fullyBooked: "bg-red-100 text-red-900 hover:bg-red-200",
+                      partiallyBooked: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
+                      available: "bg-green-100 text-green-900 hover:bg-green-200",
+                    }}
+                  />
+                </div>
               </CardContent>
+
             </Card>
 
             <Card>
