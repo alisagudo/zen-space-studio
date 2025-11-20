@@ -1,14 +1,99 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  role     UserRole
+  bookings Booking[]
+}
+
+enum UserRole {
+  ADMIN
+  SERVICE_PROVIDER
+  VISITOR
+}
+
+model Room {
+  id          Int       @id @default(autoincrement())
+  name        String
+  capacity    Int
+  description String?
+  bookings    Booking[]
+  events      Event[]
+}
+
+model Booking {
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  startTime   DateTime
+  endTime     DateTime
+  status      BookingStatus @default(PENDING)
+
+  roomId      Int
+  room        Room    @relation(fields: [roomId], references: [id])
+
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id])
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  instructor  String
+  date        DateTime
+  time        DateTime
+
+  roomId      Int
+  room        Room @relation(fields: [roomId], references: [id])
+}
+
+model BookingRequest {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String
+  date        DateTime
+  time        String
+  duration    Int
+  capacity    Int
+  eventType   String
+  notes       String?
+
+  createdAt   DateTime  @default(now())
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model StudioInfo {
+  id            Int @id @default(1)
+  studioName    String
+  address       String
+  email         String
+  phone         String
+  instagramLink String?
+  facebookLink  String?
+  description   String?
 }
