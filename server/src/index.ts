@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { prisma } from "./prisma";
+import { prisma } from "./db";
 
 // Routerid:
 import roomsRouter from "./routes/rooms";
