@@ -12,3 +12,32 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Room {
+  id        Int    @id @default(autoincrement())
+  name      String
+  capacity  Int
+  bookings  Booking[]
+  events    Event[]
+}
+
+model Booking {
+  id        Int @id @default(autoincrement())
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+
+  roomId Int
+  room   Room @relation(fields: [roomId], references: [id])
+}
+
+model Event {
+  id          Int    @id @default(autoincrement())
+  title       String
+  instructor  String
+  date        DateTime
+  time        DateTime
+
+  roomId Int
+  room   Room @relation(fields: [roomId], references: [id])
+}
