@@ -5,12 +5,8 @@ import dotenv from "dotenv";
 // Prisma client import
 import { prisma } from "./prisma";
 
-// Routerid
-import roomsRouter from "./routes/rooms";
-import eventsRouter from "./routes/events";
-import bookingsRouter from "./routes/bookings";
-import contactRouter from "./routes/contact";
-import studioRouter from "./routes/studio";
+import studioInfoRoutes from "./routes/studioInfo";
+import contactFormRoutes from "./routes/contactForm";
 
 dotenv.config();
 
@@ -26,3 +22,6 @@ app.listen(4000, () => {
   console.log("Server running on http://localhost:4000");
   
 });
+
+app.use("/studioinfo", studioInfoRoutes);
+app.use("/contactform", contactFormRoutes);

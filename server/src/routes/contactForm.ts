@@ -5,14 +5,16 @@ const router = Router();
 
 router.post("/", async (req, res) => {
   try {
-    const message = await prisma.contactMessage.create({
-      data: req.body
+    const { name, email, phone, message } = req.body;
+
+    const saved = await prisma.contactMessage.create({
+      data: { name, email, phone, message }
     });
-    res.json(message);
-  } catch (err) {
+
+    res.json(saved);
+  } catch (error) {
     res.status(500).json({ error: "Failed to submit message" });
   }
 });
 
 export default router;
-
