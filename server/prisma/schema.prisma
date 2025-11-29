@@ -102,11 +102,11 @@ model Registration {
 }
 
 model Service {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   title       String
   description String
-  icon        String?  
-  category    String?  // "space" or "activity"
+  icon        String?
+  category    String? // "space" or "activity"
 }
 
 model ContactInfo {
