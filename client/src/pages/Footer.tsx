@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { Facebook, Instagram } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 export function Footer() {
   const [info, setInfo] = useState<any>(null);
 
   useEffect(() => {
     fetch("http://localhost:4000/studioinfo")
-      .then(res => res.json())
-      .then(data => setInfo(data));
+      .then((res) => res.json())
+      .then((data) => setInfo(data));
   }, []);
 
   return (
     <footer className="bg-gray-900 text-gray-300 py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
+        
         <div className="grid md:grid-cols-3 gap-8 mb-8">
 
           <div>
@@ -23,17 +24,19 @@ export function Footer() {
             </p>
           </div>
 
+          {/* KIIRLINGID*/}
           <div>
             <h4 className="text-white mb-4">Kiirlingid</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/" className="hover:text-white">Avaleht</a></li>
-              <li><a href="/teenused" className="hover:text-white">Teenused</a></li>
-              <li><a href="/tunniplaan" className="hover:text-white">Tunniplaan</a></li>
-              <li><a href="/booking" className="hover:text-white">Broneerimine</a></li>
-              <li><a href="/contact" className="hover:text-white">Kontakt</a></li>
+              <li><NavLink to="/" className="hover:text-white">Avaleht</NavLink></li>
+              <li><NavLink to="/teenused" className="hover:text-white">Mis on Zen Space?</NavLink></li>
+              <li><NavLink to="/tunniplaan" className="hover:text-white">Tunniplaan</NavLink></li>
+              <li><NavLink to="/booking" className="hover:text-white">Broneeri ruum</NavLink></li>
+              <li><NavLink to="/contact" className="hover:text-white">Kontakt</NavLink></li>
             </ul>
           </div>
 
+          {/* CONTACT */}
           <div>
             <h4 className="text-white mb-4">Kontakt</h4>
 
@@ -42,19 +45,31 @@ export function Footer() {
                 <li>{info.location}</li>
                 <li>{info.phone}</li>
                 <li>{info.email}</li>
-                <li className="flex items-center gap-2 pt-2">
-                  <a href={`https://instagram.com/${info.instagram.replace("@", "")}`}
-                     target="_blank"
-                     className="hover:text-white"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a href={`https://facebook.com/${info.facebook.replace(/\s/g, "")}`}
-                     target="_blank"
-                     className="hover:text-white"
-                  >
-                    <Facebook className="w-5 h-5" />
-                  </a>
+
+                <li className="flex items-center gap-4 pt-2">
+                  {/* Instagram */}
+                  {info.instagram && (
+                    <a
+                      href={`https://instagram.com/${info.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white"
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+
+                  {/* Facebook */}
+                  {info.facebook && (
+                    <a
+                      href={`https://facebook.com/${info.facebook.replace(/\s+/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white"
+                    >
+                      <Facebook className="w-5 h-5" />
+                    </a>
+                  )}
                 </li>
               </ul>
             )}

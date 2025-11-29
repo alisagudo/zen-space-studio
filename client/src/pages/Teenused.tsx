@@ -37,8 +37,8 @@ export function Services() {
         <Tabs value={activeTab} onValueChange={handleTab}>
 
           <TabsList className="grid grid-cols-2 max-w-2xl mx-auto mb-12 rounded-full p-1.5">
-            <TabsTrigger value="space">Tutvu ruumiga</TabsTrigger>
-            <TabsTrigger value="activities">Avasta tegevusi</TabsTrigger>
+            <TabsTrigger value="space">Tutvu stuudio ruumi võimalustega</TabsTrigger>
+            <TabsTrigger value="activities">Avasta, mida siin korraldatakse!</TabsTrigger>
           </TabsList>
 
           {/* SPACE TAB */}
