@@ -10,9 +10,11 @@ router.get("/", async (req, res) => {
 
     if (!info) {
       return res.json({
+        name: "Zen Space Studio",
+        description: "Calm your mind, nourish your soul & connect with your body.",
         location: "Kalaranna 8/11, Tallinn",
-        phone: "+372 5XXX XXXX",
-        email: "sten@zenspace.ee",
+        phone: "+372 5275632",
+        email: "mia@zenspace.ee",
         instagram: "@zen.space.studio",
         facebook: "Zen Space Studio",
         hours: "Esmaspäev - pühapäev, 7:00 - 23:00"

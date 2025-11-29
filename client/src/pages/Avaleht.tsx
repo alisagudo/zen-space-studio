@@ -19,11 +19,11 @@ export function Avaleht() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center space-y-8 mb-12">
             <h1 className="text-5xl md:text-6xl lg:text-7xl text-gray-800">
-              Zen Space Studio
+              {info ? info.name : "Zen Space Studio"}
             </h1>
 
             <p className="text-xl text-gray-600">
-              {info ? info.hours : "Calm your mind, nourish your soul & connect with your body."}
+              {info ? info.description : "Calm your mind, nourish your soul & connect with your body."}
             </p>
 
             <div className="flex justify-center">
