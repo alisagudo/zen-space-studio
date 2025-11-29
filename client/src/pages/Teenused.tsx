@@ -9,6 +9,19 @@ import * as Icons from "lucide-react";
 // Map icon names from backend → Lucide icons
 const ICONS: Record<string, any> = Icons;
 
+// Color mapping from the OLD design
+const ACTIVITY_COLORS: Record<string, { bg: string; text: string }> = {
+  "Jooga- ja meditatsioonitunnid": { bg: "bg-purple-100", text: "text-purple-600" },
+  "Pilatese treeningud": { bg: "bg-blue-100", text: "text-blue-600" },
+  "Teetseremooniad": { bg: "bg-green-100", text: "text-green-600" },
+  "Helirännakud": { bg: "bg-pink-100", text: "text-pink-600" },
+  "Hingamispraktikad": { bg: "bg-teal-100", text: "text-teal-600" },
+  "Kunstinäitused": { bg: "bg-amber-100", text: "text-amber-600" },
+  "Eraüritused": { bg: "bg-rose-100", text: "text-rose-600" },
+  "Seminarid ja koolitused": { bg: "bg-indigo-100", text: "text-indigo-600" },
+  "Ettevõtte heaolu": { bg: "bg-cyan-100", text: "text-cyan-600" },
+};
+
 export function Services() {
   const [services, setServices] = useState<any[]>([]);
   const location = useLocation();
@@ -40,8 +53,12 @@ export function Services() {
 
         <Tabs value={activeTab} onValueChange={handleTab}>
           <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-2 mb-12 h-auto rounded-full p-1.5">
-            <TabsTrigger value="space" className="flex flex-col">Tutvu stuudio<br/>ruumi võimalustega</TabsTrigger>
-            <TabsTrigger value="activities" className="flex flex-col">Avasta, mida siin<br/>korraldatakse!</TabsTrigger>
+            <TabsTrigger value="space" className="flex flex-col">
+              Tutvu stuudio<br />ruumi võimalustega
+            </TabsTrigger>
+            <TabsTrigger value="activities" className="flex flex-col">
+              Avasta, mida siin<br />korraldatakse!
+            </TabsTrigger>
           </TabsList>
 
           {/* SPACE TAB */}
@@ -88,7 +105,11 @@ export function Services() {
                     return (
                       <div key={p.id} className="p-6 border-2 border-gray-800 rounded-lg bg-gray-50">
                         <div className="flex items-center gap-2 mb-2 text-gray-800">
-                          {Icon && <Icon className="w-5 h-5 text-gray-800" />}
+                          {Icon && (
+                            <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                              <Icon className="w-4 h-4 text-green-600" />
+                            </div>
+                          )}
                           <span>{p.title}</span>
                         </div>
 
@@ -124,12 +145,19 @@ export function Services() {
               {activityServices.map((service) => {
                 const Icon = ICONS[service.icon];
 
+                // COLORS from old UI
+                const colors = ACTIVITY_COLORS[service.title] || {
+                  bg: "bg-gray-100",
+                  text: "text-gray-700",
+                };
+
                 return (
                   <Card key={service.id} className="hover:shadow-lg transition-shadow">
                     <CardHeader>
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                        {Icon && <Icon className="w-6 h-6 text-gray-700" />}
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${colors.bg}`}>
+                        {Icon && <Icon className={`w-6 h-6 ${colors.text}`} />}
                       </div>
+
                       <CardTitle>{service.title}</CardTitle>
                       <CardDescription>{service.description}</CardDescription>
                     </CardHeader>
