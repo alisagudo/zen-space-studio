@@ -1,57 +1,49 @@
+import { useEffect, useState } from "react";
 import { Calendar } from "../components/ui/Calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Textarea } from "../components/ui/Textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select";
-import { useState } from "react";
-import { Calendar as CalendarIcon, Clock, Users, Mail, Phone, User } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/Select";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  Users,
+  Mail,
+  Phone,
+  User,
+} from "lucide-react";
 import { toast } from "sonner";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
-const bookings = [
-  {
-    date: new Date(2025, 10, 13),
-    title: "Vinyasa Yoga",
-    time: "7:00 AM - 8:30 AM",
-    instructor: "Tuuli Tuul",
-  },
-  {
-    date: new Date(2025, 10, 13),
-    title: "Meditatsiooni Workshop",
-    time: "10:00 AM - 12:00 PM",
-    instructor: "Peeter Peet",
-  },
-  {
-    date: new Date(2025, 10, 14),
-    title: "Pilates",
-    time: "6:00 PM - 7:00 PM",
-    instructor: "Emma Erm",
-  },
-  {
-    date: new Date(2025, 10, 15),
-    title: "Hingamisrännak",
-    time: "5:30 PM - 6:30 PM",
-    instructor: "David Park",
-  },
-  {
-    date: new Date(2025, 10, 16),
-    title: "Teetseremoonia",
-    time: "9:00 AM - 10:00 AM",
-    instructor: "Saara Mets",
-  },
-  {
-    date: new Date(2025, 10, 19),
-    title: "Eraüritus",
-    time: "7:00 AM - 11:00 PM",
-    instructor: "Privaatne broneering",
-  },
-];
+type RoomEvent = {
+  id: number;
+  date: Date;
+  title: string;
+  instructor: string;
+  startHour: number;
+  endHour: number;
+  timeLabel: string;
+};
 
 export function Booking() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date(2025, 10, 13));
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<RoomEvent[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,14 +55,60 @@ export function Booking() {
     people: "",
     eventType: "",
     otherEventType: "",
-    notes: ""
+    notes: "",
   });
 
+  // Load events for availability calendar
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const res = await fetch("http://localhost:4000/events");
+        if (!res.ok) throw new Error("Failed to load events");
+        const data = await res.json();
+
+        const mapped: RoomEvent[] = data.map((evt: any) => {
+          const date = new Date(evt.date);
+          const start = new Date(evt.startTime);
+          const end = new Date(evt.endTime);
+
+          const startHour = start.getHours() + start.getMinutes() / 60;
+          const endHour = end.getHours() + end.getMinutes() / 60;
+
+          const timeLabel = `${start.toLocaleTimeString("et-EE", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })} - ${end.toLocaleTimeString("et-EE", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}`;
+
+          return {
+            id: evt.id,
+            date,
+            title: evt.title,
+            instructor: evt.instructor,
+            startHour,
+            endHour,
+            timeLabel,
+          };
+        });
+
+        setEvents(mapped);
+      } catch (err: any) {
+        console.error(err);
+        toast.error("Broneeringute laadimine ebaõnnestus");
+      } finally {
+        setLoadingEvents(false);
+      }
+    }
+
+    loadEvents();
+  }, []);
+
   const bookingsForSelectedDate = selectedDate
-    ? bookings.filter(
+    ? events.filter(
         (booking) =>
-          booking.date.toDateString() ===
-          selectedDate.toDateString(),
+          booking.date.toDateString() === selectedDate.toDateString()
       )
     : [];
 
@@ -79,67 +117,45 @@ export function Booking() {
     if (!formData.time || !formData.duration) {
       return "";
     }
-    
+
     const [hours, minutes] = formData.time.split(":").map(Number);
     const durationH = parseInt(formData.duration);
-    
+
     let endHours = hours + durationH;
     let endMinutes = minutes;
-    
-    return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`;
+
+    return `${String(endHours).padStart(2, "0")}:${String(
+      endMinutes
+    ).padStart(2, "0")}`;
   };
 
   // Funktsioon, mis arvutab, mitu broneeringut on päevas
   const getBookingsCountForDate = (date: Date) => {
-    return bookings.filter(
+    return events.filter(
       (booking) => booking.date.toDateString() === date.toDateString()
     ).length;
   };
 
-  // Abifunktsioon aja parsimiseks (nt "7:00 AM - 8:30 AM" -> [7.0, 8.5])
-  const parseTimeRange = (timeStr: string): [number, number] => {
-    const parts = timeStr.split(" - ");
-    const parseTime = (time: string): number => {
-      const [hourMin, period] = time.split(" ");
-      const [hourStr, minStr] = hourMin.split(":");
-      let hour = parseInt(hourStr);
-      const min = parseInt(minStr);
-      
-      if (period === "PM" && hour !== 12) {
-        hour += 12;
-      } else if (period === "AM" && hour === 12) {
-        hour = 0;
-      }
-      
-      return hour + min / 60;
-    };
-    
-    return [parseTime(parts[0]), parseTime(parts[1])];
-  };
-
   // Kontrollime, kas on vähemalt 1 tunni pikkune vaba aeg
   const hasAtLeastOneHourFree = (date: Date): boolean => {
-    const dayBookings = bookings.filter(
+    const dayBookings = events.filter(
       (booking) => booking.date.toDateString() === date.toDateString()
     );
-    
+
     if (dayBookings.length === 0) return true; // Täiesti vaba päev
-    
+
     const openTime = 7; // 7:00
     const closeTime = 23; // 23:00
-    
-    // Parsime kõik broneeringud ja sorteerime need algusaja järgi
+
     const timeRanges = dayBookings
-      .map(b => parseTimeRange(b.time))
+      .map((b) => [b.startHour, b.endHour] as [number, number])
       .sort((a, b) => a[0] - b[0]);
-    
-    // Kontrollime vabu ajavahemikke
-    
+
     // 1. Enne esimest broneeringut
     if (timeRanges[0][0] - openTime >= 1) {
       return true;
     }
-    
+
     // 2. Broneeringute vahel
     for (let i = 0; i < timeRanges.length - 1; i++) {
       const gap = timeRanges[i + 1][0] - timeRanges[i][1];
@@ -147,61 +163,77 @@ export function Booking() {
         return true;
       }
     }
-    
+
     // 3. Pärast viimast broneeringut
     if (closeTime - timeRanges[timeRanges.length - 1][1] >= 1) {
       return true;
     }
-    
+
     return false;
   };
 
-  // Päev on osaliselt hõivatud, kui on broneeringuid ja vähemalt 1h vaba
   const isDatePartiallyBooked = (date: Date) => {
     const count = getBookingsCountForDate(date);
     return count > 0 && hasAtLeastOneHourFree(date);
   };
 
-  // Päev on täielikult hõivatud, kui on broneeringuid ega ole 1h vaba
   const isDateFullyBooked = (date: Date) => {
     const count = getBookingsCountForDate(date);
     return count > 0 && !hasAtLeastOneHourFree(date);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Kontrolli, kas valitud kuupäev on hõivatud
+
     if (formData.date) {
       const selectedFormDate = new Date(formData.date);
-      const isBooked = bookings.some(booking => {
+      const isBooked = events.some((booking) => {
         const bookingDate = new Date(booking.date);
         return bookingDate.toDateString() === selectedFormDate.toDateString();
       });
-      
+
       if (isBooked) {
-        toast.error("See kuupäev on juba hõivatud! Palun valige teine kuupäev.");
+        toast.error(
+          "See kuupäev on juba hõivatud! Palun valige teine kuupäev."
+        );
         return;
       }
     }
-    
-    toast.success("Broneeringu taotlus edukalt saadetud! Võtame teiega peagi ühendust.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      date: "",
-      time: "",
-      duration: "",
-      people: "",
-      eventType: "",
-      otherEventType: "",
-      notes: ""
-    });
-  };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    try {
+      const res = await fetch("http://localhost:4000/bookingform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.error || "Broneeringu taotluse saatmine ebaõnnestus");
+      }
+
+      toast.success(
+        "Broneeringu taotlus edukalt saadetud! Võtame teiega peagi ühendust."
+      );
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        date: "",
+        time: "",
+        duration: "",
+        people: "",
+        eventType: "",
+        otherEventType: "",
+        notes: "",
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Broneeringu taotlus ebaõnnestus");
+    }
   };
 
   return (
@@ -220,7 +252,6 @@ export function Booking() {
                 Tutvu stuudio ruumi võimalustega
               </Button>
             </Link>
-
           </div>
         </div>
 
@@ -256,17 +287,20 @@ export function Booking() {
                       fullyBooked: (date) => isDateFullyBooked(date),
                       partiallyBooked: (date) => isDatePartiallyBooked(date),
                       available: (date) =>
-                        getBookingsCountForDate(date) === 0 && date >= new Date(),
+                        getBookingsCountForDate(date) === 0 &&
+                        date >= new Date(),
                     }}
                     modifiersClassNames={{
-                      fullyBooked: "bg-red-100 text-red-900 hover:bg-red-200",
-                      partiallyBooked: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
-                      available: "bg-green-100 text-green-900 hover:bg-green-200",
+                      fullyBooked:
+                        "bg-red-100 text-red-900 hover:bg-red-200",
+                      partiallyBooked:
+                        "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
+                      available:
+                        "bg-green-100 text-green-900 hover:bg-green-200",
                     }}
                   />
                 </div>
               </CardContent>
-
             </Card>
 
             <Card>
@@ -282,60 +316,75 @@ export function Booking() {
                     : "Vali kuupäev"}
                 </CardTitle>
                 <CardDescription>
-                  {bookingsForSelectedDate.length > 0
+                  {loadingEvents
+                    ? "Laen broneeringuid..."
+                    : bookingsForSelectedDate.length > 0
                     ? isDateFullyBooked(selectedDate)
                       ? "Ruum hõivatud terveks päevaks"
-                      : `${bookingsForSelectedDate.length} broneering${bookingsForSelectedDate.length > 1 ? "ut" : ""} sellel päeval`
+                      : `${bookingsForSelectedDate.length} broneering${
+                          bookingsForSelectedDate.length > 1 ? "ut" : ""
+                        } sellel päeval`
                     : "Ruum on broneeringuteks saadaval"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {bookingsForSelectedDate.length > 0 ? (
+                  {loadingEvents ? (
+                    <div className="text-center py-8 text-gray-500">
+                      Laen andmeid...
+                    </div>
+                  ) : bookingsForSelectedDate.length > 0 ? (
                     <>
                       <div className="flex items-center gap-2 mb-4">
-                        <div className={`w-4 h-4 rounded ${
-                          isDateFullyBooked(selectedDate)
-                            ? 'bg-red-500' 
-                            : 'bg-yellow-500'
-                        }`}></div>
+                        <div
+                          className={`w-4 h-4 rounded ${
+                            isDateFullyBooked(selectedDate)
+                              ? "bg-red-500"
+                              : "bg-yellow-500"
+                          }`}
+                        ></div>
                         <span className="text-sm text-gray-700">
                           {isDateFullyBooked(selectedDate)
-                            ? 'Ruum on täielikult hõivatud' 
-                            : 'Ruum on osaliselt hõivatud'}
+                            ? "Ruum on täielikult hõivatud"
+                            : "Ruum on osaliselt hõivatud"}
                         </span>
                       </div>
-                      {bookingsForSelectedDate.map(
-                        (booking, index) => (
-                          <div
-                            key={index}
-                            className={`p-4 border rounded-lg ${
-                              isDateFullyBooked(selectedDate)
-                                ? 'border-red-200 bg-red-50' 
-                                : 'border-yellow-200 bg-yellow-50'
-                            }`}
-                          >
-                            <div className="flex items-start justify-between mb-2">
-                              <h4 className="text-gray-800">
-                                {booking.title}
-                              </h4>
-                              <Badge variant={isDateFullyBooked(selectedDate) ? "destructive" : "secondary"}>
-                                Hõivatud
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-1">
-                              {booking.time}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Juhendaja: {booking.instructor}
-                            </p>
+                      {bookingsForSelectedDate.map((booking) => (
+                        <div
+                          key={booking.id}
+                          className={`p-4 border rounded-lg ${
+                            isDateFullyBooked(selectedDate)
+                              ? "border-red-200 bg-red-50"
+                              : "border-yellow-200 bg-yellow-50"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-gray-800">
+                              {booking.title}
+                            </h4>
+                            <Badge
+                              variant={
+                                isDateFullyBooked(selectedDate)
+                                  ? "destructive"
+                                  : "secondary"
+                              }
+                            >
+                              Hõivatud
+                            </Badge>
                           </div>
-                        ),
-                      )}
+                          <p className="text-sm text-gray-600 mb-1">
+                            {booking.timeLabel}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Juhendaja: {booking.instructor}
+                          </p>
+                        </div>
+                      ))}
                       {!isDateFullyBooked(selectedDate) && (
                         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                           <p className="text-sm text-blue-800">
-                            Päev on osaliselt hõivatud. Täitke broneerimise vorm, et broneerida vaba aeg.
+                            Päev on osaliselt hõivatud. Täitke broneerimise
+                            vorm, et broneerida vaba aeg.
                           </p>
                         </div>
                       )}
@@ -380,8 +429,9 @@ export function Booking() {
             <Card className="bg-gray-50">
               <CardContent className="pt-6">
                 <p className="text-sm text-gray-600">
-                  <span className="text-gray-800">Märkus:</span> Pärast broneeringu taotluse saatmist 
-                  võtame teiega ühendust 24 tunni jooksul, et kinnitada kättesaadavus ja arutada 
+                  <span className="text-gray-800">Märkus:</span> Pärast
+                  broneeringu taotluse saatmist võtame teiega ühendust 24
+                  tunni jooksul, et kinnitada kättesaadavus ja arutada
                   üksikasju.
                 </p>
               </CardContent>
@@ -407,7 +457,9 @@ export function Booking() {
                         id="name"
                         placeholder="Teie nimi"
                         value={formData.name}
-                        onChange={(e) => handleChange("name", e.target.value)}
+                        onChange={(e) =>
+                          handleChange("name", e.target.value)
+                        }
                         required
                         className="pl-10"
                       />
@@ -423,7 +475,9 @@ export function Booking() {
                         type="email"
                         placeholder="teie@email.ee"
                         value={formData.email}
-                        onChange={(e) => handleChange("email", e.target.value)}
+                        onChange={(e) =>
+                          handleChange("email", e.target.value)
+                        }
                         required
                         className="pl-10"
                       />
@@ -439,7 +493,9 @@ export function Booking() {
                         type="tel"
                         placeholder="+372 5XXX XXXX"
                         value={formData.phone}
-                        onChange={(e) => handleChange("phone", e.target.value)}
+                        onChange={(e) =>
+                          handleChange("phone", e.target.value)
+                        }
                         required
                         className="pl-10"
                       />
@@ -455,7 +511,9 @@ export function Booking() {
                           id="date"
                           type="date"
                           value={formData.date}
-                          onChange={(e) => handleChange("date", e.target.value)}
+                          onChange={(e) =>
+                            handleChange("date", e.target.value)
+                          }
                           required
                           className="pl-10"
                         />
@@ -470,7 +528,9 @@ export function Booking() {
                           id="time"
                           type="time"
                           value={formData.time}
-                          onChange={(e) => handleChange("time", e.target.value)}
+                          onChange={(e) =>
+                            handleChange("time", e.target.value)
+                          }
                           required
                           className="pl-10"
                         />
@@ -480,7 +540,9 @@ export function Booking() {
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="duration">Kestus (tundides) *</Label>
+                      <Label htmlFor="duration">
+                        Kestus (tundides) *
+                      </Label>
                       <div className="relative">
                         <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input
@@ -490,7 +552,9 @@ export function Booking() {
                           max="16"
                           placeholder="Kestus tundides"
                           value={formData.duration}
-                          onChange={(e) => handleChange("duration", e.target.value)}
+                          onChange={(e) =>
+                            handleChange("duration", e.target.value)
+                          }
                           required
                           className="pl-10"
                         />
@@ -501,7 +565,8 @@ export function Booking() {
                   {calculateEndTime() && (
                     <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-sm text-blue-800">
-                        <span className="font-semibold">Lõppaeg:</span> {calculateEndTime()}
+                        <span className="font-semibold">Lõppaeg:</span>{" "}
+                        {calculateEndTime()}
                       </p>
                     </div>
                   )}
@@ -517,7 +582,9 @@ export function Booking() {
                         max="15"
                         placeholder="Osalejate arv (max 15)"
                         value={formData.people}
-                        onChange={(e) => handleChange("people", e.target.value)}
+                        onChange={(e) =>
+                          handleChange("people", e.target.value)
+                        }
                         required
                         className="pl-10"
                       />
@@ -526,20 +593,44 @@ export function Booking() {
 
                   <div className="space-y-2">
                     <Label htmlFor="eventType">Ürituse tüüp *</Label>
-                    <Select value={formData.eventType} onValueChange={(value) => handleChange("eventType", value)} required>
+                    <Select
+                      value={formData.eventType}
+                      onValueChange={(value) =>
+                        handleChange("eventType", value)
+                      }
+                      required
+                    >
                       <SelectTrigger id="eventType">
                         <SelectValue placeholder="Vali ürituse tüüp" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="yoga-meditation">Jooga- ja meditatsioonitunnid</SelectItem>
-                        <SelectItem value="pilates">Pilatese treeningud</SelectItem>
-                        <SelectItem value="tea-ceremony">Teetseremooniad</SelectItem>
-                        <SelectItem value="sound-journey">Helirännakud</SelectItem>
-                        <SelectItem value="breathwork">Hingamispraktikad</SelectItem>
-                        <SelectItem value="art-exhibition">Kunstinäitused</SelectItem>
-                        <SelectItem value="private-event">Eraüritused</SelectItem>
-                        <SelectItem value="seminar-training">Seminarid ja koolitused</SelectItem>
-                        <SelectItem value="corporate">Ettevõtte heaolu</SelectItem>
+                        <SelectItem value="yoga-meditation">
+                          Jooga- ja meditatsioonitunnid
+                        </SelectItem>
+                        <SelectItem value="pilates">
+                          Pilatese treeningud
+                        </SelectItem>
+                        <SelectItem value="tea-ceremony">
+                          Teetseremooniad
+                        </SelectItem>
+                        <SelectItem value="sound-journey">
+                          Helirännakud
+                        </SelectItem>
+                        <SelectItem value="breathwork">
+                          Hingamispraktikad
+                        </SelectItem>
+                        <SelectItem value="art-exhibition">
+                          Kunstinäitused
+                        </SelectItem>
+                        <SelectItem value="private-event">
+                          Eraüritused
+                        </SelectItem>
+                        <SelectItem value="seminar-training">
+                          Seminarid ja koolitused
+                        </SelectItem>
+                        <SelectItem value="corporate">
+                          Ettevõtte heaolu
+                        </SelectItem>
                         <SelectItem value="other">Muu</SelectItem>
                       </SelectContent>
                     </Select>
@@ -547,12 +638,16 @@ export function Booking() {
 
                   {formData.eventType === "other" && (
                     <div className="space-y-2">
-                      <Label htmlFor="otherEventType">Palun täpsustage *</Label>
+                      <Label htmlFor="otherEventType">
+                        Palun täpsustage *
+                      </Label>
                       <Input
                         id="otherEventType"
                         placeholder="Kirjeldage oma ürituse tüüpi"
                         value={formData.otherEventType}
-                        onChange={(e) => handleChange("otherEventType", e.target.value)}
+                        onChange={(e) =>
+                          handleChange("otherEventType", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -564,7 +659,9 @@ export function Booking() {
                       id="notes"
                       placeholder="Kirjelda oma üritust või lisa erinõudeid..."
                       value={formData.notes}
-                      onChange={(e) => handleChange("notes", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("notes", e.target.value)
+                      }
                       rows={4}
                     />
                   </div>

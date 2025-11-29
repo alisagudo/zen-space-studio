@@ -3,10 +3,11 @@ import { prisma } from "../prisma";
 
 const router = Router();
 
-// Get all rooms (currently only 1)
 router.get("/", async (req, res) => {
-  const rooms = await prisma.room.findMany();
-  res.json(rooms);
+  const registrations = await prisma.registration.findMany({
+    include: { event: true }
+  });
+  res.json(registrations);
 });
 
 export default router;
