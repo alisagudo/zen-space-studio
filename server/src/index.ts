@@ -14,6 +14,7 @@ import eventsRoutes from "./routes/events";
 import registrationFormRoutes from "./routes/registrationForm";
 import registrationsRoutes from "./routes/registrations";
 import roomsRoutes from "./routes/rooms";
+import servicesRoutes from "./routes/services";
 
 dotenv.config();
 
@@ -39,3 +40,5 @@ app.use("/events", eventsRoutes);
 app.use("/registration", registrationFormRoutes);
 app.use("/registrations", registrationsRoutes);
 app.use("/rooms", roomsRoutes);
+app.use("/services", servicesRoutes);
+

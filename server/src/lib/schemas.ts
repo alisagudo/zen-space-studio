@@ -36,6 +36,16 @@ export const ContactSchema = z.object({
   message: z.string().min(1)
 });
 
+export const ServiceSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  icon: z.string().optional(),
+  category: z.string().optional()
+});
+
+
 export type BookingDto = z.infer<typeof BookingSchema>;
 export type EventRegistrationDto = z.infer<typeof EventRegistrationSchema>;
 export type ContactDto = z.infer<typeof ContactSchema>;
+export type ServiceDto = z.infer<typeof ServiceSchema>;
+
