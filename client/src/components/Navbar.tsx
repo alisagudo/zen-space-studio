@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Button } from "./ui/Button";
 import { Menu, X, User } from "lucide-react";
 import {
@@ -17,60 +17,149 @@ import {
 } from "./ui/Dialog";
 import { Input } from "./ui/Input";
 import { Label } from "./ui/Label";
-import logo from "../assets/zen-space-logo.PNG"
+import logo from "../assets/zen-space-logo.PNG";
+import { toast } from "sonner";
+
+type AuthUser = {
+  id: number;
+  name: string;
+  email: string;
+  role?: string;
+};
 
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
-      `transition-colors ${
-        isActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
-      }`
+    `transition-colors ${
+      isActive
+        ? "text-gray-900 font-semibold"
+        : "text-gray-600 hover:text-gray-900"
+    }`;
 
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [signupDialogOpen, setSignupDialogOpen] = useState(false);
+
   const [signupForm, setSignupForm] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [passwordError, setPasswordError] = useState("");
 
-  const handleSignupSubmit = (e: React.FormEvent) => {
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
+
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("zen_user");
+    if (storedUser) {
+      try {
+        setAuthUser(JSON.parse(storedUser));
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
+  const handleSignupChange = (field: string, value: string) => {
+    setSignupForm((prev) => ({ ...prev, [field]: value }));
+    if (passwordError) setPasswordError("");
+  };
+
+  const handleLoginChange = (field: string, value: string) => {
+    setLoginForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Reset error
+
     setPasswordError("");
-    
-    // Check password length
+
     if (signupForm.password.length < 5) {
       setPasswordError("Parool peab olema vähemalt 5 märki pikk");
       return;
     }
-    
-    // Check if passwords match
+
     if (signupForm.password !== signupForm.confirmPassword) {
       setPasswordError("Paroolid ei kattu");
       return;
     }
-    
-    // Success - would normally create account here
-    alert("Konto edukalt loodud!");
-    setSignupDialogOpen(false);
-    setSignupForm({
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: ""
-    });
+
+    try {
+      setAuthLoading(true);
+      const res = await fetch("http://localhost:4000/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: signupForm.name,
+          email: signupForm.email,
+          password: signupForm.password,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.error || "Registreerimine ebaõnnestus");
+      }
+
+      toast.success("Konto edukalt loodud! Logi nüüd sisse.");
+      setSignupDialogOpen(false);
+      setSignupForm({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Registreerimine ebaõnnestus");
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
-  const handleSignupChange = (field: string, value: string) => {
-    setSignupForm(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (passwordError) {
-      setPasswordError("");
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setAuthLoading(true);
+      const res = await fetch("http://localhost:4000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginForm),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.error || "Sisselogimine ebaõnnestus");
+      }
+
+      const { token, user } = data;
+
+      localStorage.setItem("zen_token", token);
+      localStorage.setItem("zen_user", JSON.stringify(user));
+
+      setAuthUser(user);
+      setLoginDialogOpen(false);
+      setLoginForm({ email: "", password: "" });
+      toast.success("Tere tulemast tagasi!");
+    } catch (err: any) {
+      toast.error(err.message || "Sisselogimine ebaõnnestus");
+    } finally {
+      setAuthLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("zen_token");
+    localStorage.removeItem("zen_user");
+    setAuthUser(null);
+    toast.success("Oled välja logitud");
   };
 
   return (
@@ -80,9 +169,15 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <NavLink to="/" className="flex items-center gap-3">
-              <img src={logo} alt="Zen Space Studio" className="h-14 w-auto" />
+              <img
+                src={logo}
+                alt="Zen Space Studio"
+                className="h-14 w-auto"
+              />
               <div className="flex flex-col leading-tight">
-                <span className="text-gray-800 font-semibold">Zen Space</span>
+                <span className="text-gray-800 font-semibold">
+                  Zen Space
+                </span>
                 <span className="text-gray-800">Studio</span>
               </div>
             </NavLink>
@@ -110,28 +205,60 @@ export function Navigation() {
                 Broneeri ruum
               </NavLink>
             </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-10 h-10 rounded-full border-2 border-black bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="Sisse logimine">
+                <button
+                  className="w-10 h-10 rounded-full border-2 border-black bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  aria-label="Sisse logimine"
+                >
                   <User className="w-5 h-5 text-gray-600" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => setLoginDialogOpen(true)}>
-                  Logi sisse
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSignupDialogOpen(true)}>
-                  Loo konto
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56">
+                {authUser ? (
+                  <>
+                    <div className="px-3 py-2 text-sm text-gray-600">
+                      <div className="font-semibold">
+                        Tere, {authUser.name}
+                      </div>
+                      {authUser.role && (
+                        <div className="text-xs uppercase text-gray-400">
+                          {authUser.role}
+                        </div>
+                      )}
+                    </div>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      Logi välja
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem
+                      onClick={() => setLoginDialogOpen(true)}
+                    >
+                      Logi sisse
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSignupDialogOpen(true)}
+                    >
+                      Loo konto
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
-          <button 
+          <button
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
 
@@ -143,7 +270,7 @@ export function Navigation() {
                 to="/"
                 className={linkClasses}
                 onClick={() => setMobileMenuOpen(false)}
->
+              >
                 Avaleht
               </NavLink>
               <NavLink
@@ -190,28 +317,44 @@ export function Navigation() {
               Sisesta oma e-mail ja parool, et sisse logida.
             </DialogDescription>
           </DialogHeader>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleLoginSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="login-email">E-mail <span className="text-red-500">*</span></Label>
+              <Label htmlFor="login-email">
+                E-mail <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="login-email"
                 type="email"
                 placeholder="nimi@email.ee"
                 required
+                value={loginForm.email}
+                onChange={(e) =>
+                  handleLoginChange("email", e.target.value)
+                }
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="login-password">Parool <span className="text-red-500">*</span></Label>
+              <Label htmlFor="login-password">
+                Parool <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="login-password"
                 type="password"
                 placeholder="Sisesta parool"
                 required
+                value={loginForm.password}
+                onChange={(e) =>
+                  handleLoginChange("password", e.target.value)
+                }
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Button type="submit" className="w-full">
-                Logi sisse
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={authLoading}
+              >
+                {authLoading ? "Sisselogimine..." : "Logi sisse"}
               </Button>
               <button
                 type="button"
@@ -239,47 +382,66 @@ export function Navigation() {
           </DialogHeader>
           <form className="space-y-4" onSubmit={handleSignupSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="signup-name">Nimi <span className="text-red-500">*</span></Label>
+              <Label htmlFor="signup-name">
+                Nimi <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="signup-name"
                 type="text"
                 placeholder="Sinu nimi"
                 required
                 value={signupForm.name}
-                onChange={(e) => handleSignupChange("name", e.target.value)}
+                onChange={(e) =>
+                  handleSignupChange("name", e.target.value)
+                }
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="signup-email">E-mail <span className="text-red-500">*</span></Label>
+              <Label htmlFor="signup-email">
+                E-mail <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="signup-email"
                 type="email"
                 placeholder="nimi@email.ee"
                 required
                 value={signupForm.email}
-                onChange={(e) => handleSignupChange("email", e.target.value)}
+                onChange={(e) =>
+                  handleSignupChange("email", e.target.value)
+                }
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="signup-password">Parool <span className="text-red-500">*</span></Label>
+              <Label htmlFor="signup-password">
+                Parool <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="signup-password"
                 type="password"
                 placeholder="Loo parool"
                 required
                 value={signupForm.password}
-                onChange={(e) => handleSignupChange("password", e.target.value)}
+                onChange={(e) =>
+                  handleSignupChange("password", e.target.value)
+                }
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="signup-password-confirm">Kinnita parool <span className="text-red-500">*</span></Label>
+              <Label htmlFor="signup-password-confirm">
+                Kinnita parool <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="signup-password-confirm"
                 type="password"
                 placeholder="Sisesta parool uuesti"
                 required
                 value={signupForm.confirmPassword}
-                onChange={(e) => handleSignupChange("confirmPassword", e.target.value)}
+                onChange={(e) =>
+                  handleSignupChange(
+                    "confirmPassword",
+                    e.target.value
+                  )
+                }
               />
             </div>
             {passwordError && (
@@ -288,8 +450,12 @@ export function Navigation() {
               </div>
             )}
             <div className="flex flex-col gap-2">
-              <Button type="submit" className="w-full">
-                Loo konto
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={authLoading}
+              >
+                {authLoading ? "Loon kontot..." : "Loo konto"}
               </Button>
               <button
                 type="button"

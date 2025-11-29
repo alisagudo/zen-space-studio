@@ -25,3 +25,8 @@
     --ring: 222.2 84% 4.9%;
   }
 }
+
+.progress-bar {
+  width: var(--progress);
+  display: block;
+}
