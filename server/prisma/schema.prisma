@@ -101,6 +101,14 @@ model Registration {
   createdAt DateTime @default(now())
 }
 
+model Service {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  icon        String?  
+  category    String?  // "space" or "activity"
+}
+
 model ContactInfo {
   id        Int     @id @default(autoincrement())
   location  String
