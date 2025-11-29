@@ -110,15 +110,15 @@ model Service {
 }
 
 model ContactInfo {
-  id        Int     @id @default(autoincrement())
-  name
-  description
-  location  String
-  phone     String
-  email     String
-  instagram String?
-  facebook  String?
-  hours     String?
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  location    String
+  phone       String
+  email       String
+  instagram   String?
+  facebook    String?
+  hours       String?
 }
 
 model ContactMessage {
