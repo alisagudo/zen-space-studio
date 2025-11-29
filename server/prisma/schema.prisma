@@ -1,41 +1,104 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  role     UserRole @default(VISITOR)
+
+  // Relations
+  bookings      Booking[] // Providers create booking requests
+  registrations Registration[]
+}
+
+enum UserRole {
+  ADMIN
+  PROVIDER
+  VISITOR
 }
 
 model Room {
-  id        Int    @id @default(autoincrement())
-  name      String
-  capacity  Int
-  bookings  Booking[]
-  events    Event[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  capacity Int
+  events   Event[]
+  bookings Booking[]
 }
 
 model Booking {
-  id        Int @id @default(autoincrement())
-  date      DateTime
-  startTime DateTime
-  endTime   DateTime
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String
+  date        DateTime
+  startTime   DateTime
+  endTime     DateTime
+  durationHrs Int
+  people      Int
+  eventType   String
+  otherType   String?
+  notes       String?
+  status      BookingStatus @default(Pending)
 
   roomId Int
   room   Room @relation(fields: [roomId], references: [id])
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  events Event[]
 }
 
+enum BookingStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+// A visible class/event in the public timetables
 model Event {
-  id          Int    @id @default(autoincrement())
-  title       String
-  instructor  String
-  date        DateTime
-  time        DateTime
+  id           Int      @id @default(autoincrement())
+  title        String
+  instructor   String
+  date         DateTime
+  startTime    DateTime
+  endTime      DateTime
+  capacity     Int      @default(15)
+  participants Int      @default(0)
 
   roomId Int
   room   Room @relation(fields: [roomId], references: [id])
+
+  // Many events can belong to one booking
+  bookingId Int?
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+
+  registrations Registration[]
+}
+
+// Visitor registrations for an event
+model Registration {
+  id      Int     @id @default(autoincrement())
+  name    String
+  email   String
+  phone   String
+  message String?
+
+  eventId Int
+  event   Event @relation(fields: [eventId], references: [id])
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model ContactInfo {
