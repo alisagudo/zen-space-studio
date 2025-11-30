@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       notes
     } = req.body;
 
-    // Build correct start & end timestamps
+    // start & end timestamps
     const start = new Date(`${date}T${time}`);
     const end = new Date(start.getTime() + Number(duration) * 60 * 60 * 1000);
 
