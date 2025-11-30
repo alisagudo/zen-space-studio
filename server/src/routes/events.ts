@@ -3,28 +3,48 @@ import { prisma } from "../prisma";
 
 const router = Router();
 
-// All events
+/**
+ * GET /events
+ * Returns ALL events with room info
+ */
 router.get("/", async (req, res) => {
-  const events = await prisma.event.findMany({
-    include: { room: true }
-  });
-  res.json(events);
+  try {
+    const events = await prisma.event.findMany({
+      include: { room: true },
+    });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch events" });
+  }
 });
 
-// Events by date
+/**
+ * GET /events/day/:date
+ * Returns events on a specific day
+ * Expects date in YYYY-MM-DD
+ */
 router.get("/day/:date", async (req, res) => {
-  const date = new Date(req.params.date);
+  try {
+    const dateStr = req.params.date; // "2025-12-01"
 
-  const events = await prisma.event.findMany({
-    where: {
-      date: {
-        gte: new Date(date.setHours(0, 0, 0)),
-        lt: new Date(date.setHours(23, 59, 59))
-      }
-    }
-  });
+    // Build full day boundaries
+    const start = new Date(`${dateStr}T00:00:00`);
+    const end = new Date(`${dateStr}T23:59:59`);
 
-  res.json(events);
+    const events = await prisma.event.findMany({
+      where: {
+        date: {
+          gte: start,
+          lte: end,
+        },
+      },
+      include: { room: true },
+    });
+
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch events for date" });
+  }
 });
 
 export default router;
