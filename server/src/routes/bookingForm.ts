@@ -13,6 +13,10 @@ router.post("/", async (req, res) => {
       notes
     } = req.body;
 
+    // Build correct start & end timestamps
+    const start = new Date(`${date}T${time}`);
+    const end = new Date(start.getTime() + Number(duration) * 60 * 60 * 1000);
+
     // Create booking request
     const booking = await prisma.booking.create({
       data: {
@@ -20,14 +24,14 @@ router.post("/", async (req, res) => {
         email,
         phone,
         date: new Date(date),
-        startTime: new Date(`${date}T${time}`),
-        endTime: new Date(`${date}T${time}`),
+        startTime: start,
+        endTime: end,
         durationHrs: Number(duration),
         people: Number(people),
         eventType,
         otherType: otherEventType,
         notes,
-        roomId: 1,     // Currently studio has 1 room
+        roomId: 1, // 1 room in studio
       }
     });
 
