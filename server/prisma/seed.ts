@@ -3,14 +3,30 @@ declare const process: any;
 import { prisma } from "../src/prisma";
 
 async function main() {
+  // CLEAR TABLES
   await prisma.service.deleteMany();
+  await prisma.contactInfo.deleteMany();
 
-  // SPACE FEATURES (left side)
+  // STUDIO CONTACT INFO
+  await prisma.contactInfo.create({
+    data: {
+      name: "Zen Space Studio",
+      description: "Calm your mind, nourish your soul & connect with your body.",
+      location: "Kalaranna 8/11, Tallinn",
+      phone: "+372 5275632",
+      email: "mia@zenspace.ee",
+      instagram: "@zen.space.studio",
+      facebook: "Zen Space Studio",
+      hours: "Esmaspäev - pühapäev, 7:00 - 23:00"
+    }
+  });
+
+  // SERVICES - SPACE - FEATURES
   const spaceFeatures = [
     {
       title: "Valgusküllane ruum",
       description: "Looduslik päevavalgus ja suured aknad",
-      icon: "Check", // frontend overrides with blue check
+      icon: "Check",
       category: "space-feature",
     },
     {
@@ -39,7 +55,7 @@ async function main() {
     },
   ];
 
-  // SPACE PRICING CARDS (right side)
+  // SERVICES - SPACE - PRICING CARDS
   const spacePricing = [
     {
       title: "Tunnipõhine",
@@ -61,7 +77,7 @@ async function main() {
     },
   ];
 
-  // ACTIVITIES TAB 
+  // SERVICES - ACTIVITIES
   const activityServices = [
     {
       title: "Jooga- ja meditatsioonitunnid",
@@ -71,13 +87,15 @@ async function main() {
     },
     {
       title: "Pilatese treeningud",
-      description: "Korraldage regulaarseid treeninguid hubases ruumis",
+      description:
+        "Korraldage regulaarseid treeninguid hubases ruumis",
       icon: "Heart",
       category: "activity",
     },
     {
       title: "Teetseremooniad",
-      description: "Rahulikud hetked tee nautimiseks ja sisemise rahu leidmiseks",
+      description:
+        "Rahulikud hetked tee nautimiseks ja sisemise rahu leidmiseks",
       icon: "Coffee",
       category: "activity",
     },
@@ -95,7 +113,8 @@ async function main() {
     },
     {
       title: "Kunstinäitused",
-      description: "Stuudio ruumide seinad on ka kunstnikele galeriide korraldamiseks",
+      description:
+        "Stuudio ruumide seinad on ka kunstnikele galeriide korraldamiseks",
       icon: "Palette",
       category: "activity",
     },
@@ -123,7 +142,7 @@ async function main() {
     data: [...spaceFeatures, ...spacePricing, ...activityServices],
   });
 
-  console.log("Service seed completed!");
+  console.log("Seed completed!");
 }
 
 main().catch((e) => {

@@ -42,3 +42,6 @@ app.use("/registrations", registrationsRoutes);
 app.use("/rooms", roomsRoutes);
 app.use("/services", servicesRoutes);
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
