@@ -5,11 +5,11 @@ import { prisma } from "../src/prisma";
 async function main() {
   // CLEAR TABLES
   await prisma.service.deleteMany();
-  await prisma.contactInfo.deleteMany();
+  await prisma.studioInfo.deleteMany();
     await prisma.room.deleteMany();
 
   // STUDIO CONTACT INFO
-  await prisma.contactInfo.create({
+  await prisma.studioInfo.create({
     data: {
       name: "Zen Space Studio",
       description: "Calm your mind, nourish your soul & connect with your body.",
