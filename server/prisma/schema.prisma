@@ -109,7 +109,7 @@ model Service {
   category    String? // "space" or "activity"
 }
 
-model ContactInfo {
+model StudioInfo {
   id          Int     @id @default(autoincrement())
   name        String
   description String

@@ -8,11 +8,11 @@ const router = Router();
  */
 router.get("/", async (req, res) => {
   try {
-    let info = await prisma.contactInfo.findFirst();
+    let info = await prisma.studioInfo.findFirst();
 
     // Auto-create default row if missing (safety fallback)
     if (!info) {
-      info = await prisma.contactInfo.create({
+      info = await prisma.studioInfo.create({
         data: {
           name: "Zen Space Studio",
           description:
@@ -52,9 +52,9 @@ router.put("/", async (req, res) => {
     } = req.body;
 
     // Ensure a record exists
-    let info = await prisma.contactInfo.findFirst();
+    let info = await prisma.studioInfo.findFirst();
     if (!info) {
-      info = await prisma.contactInfo.create({
+      info = await prisma.studioInfo.create({
         data: {
           name: "Zen Space Studio",
           description:
@@ -69,7 +69,7 @@ router.put("/", async (req, res) => {
       });
     }
 
-    const updated = await prisma.contactInfo.update({
+    const updated = await prisma.studioInfo.update({
       where: { id: info.id },
       data: {
         name,
