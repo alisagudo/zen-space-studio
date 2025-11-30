@@ -54,6 +54,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-white"
+                      aria-label="Instagram"
                     >
                       <Instagram className="w-5 h-5" />
                     </a>
@@ -66,6 +67,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-white"
+                      aria-label="Facebook"
                     >
                       <Facebook className="w-5 h-5" />
                     </a>
@@ -84,3 +86,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export default Footer;

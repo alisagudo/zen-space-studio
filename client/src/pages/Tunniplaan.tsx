@@ -258,15 +258,13 @@ export function Tunniplaan() {
                                 className={`h-2 rounded-full transition-all ${
                                   isFull ? "bg-red-500" : "bg-green-500"
                                 } progress-bar`}
-                                style={
-                                  {
-                                    "--progress":
-                                      (booking.currentParticipants /
-                                        booking.capacity) *
+                                style={{
+                                  ["--progress" as any]:
+                                    (booking.currentParticipants /
+                                      booking.capacity) *
                                       100 +
-                                      "%",
-                                  } as React.CSSProperties
-                                }
+                                    "%",
+                                }}
                               />
                             </div>
                             <span className="text-xs text-gray-500 min-w-fit">
