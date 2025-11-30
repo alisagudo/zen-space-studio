@@ -6,6 +6,7 @@ async function main() {
   // CLEAR TABLES
   await prisma.service.deleteMany();
   await prisma.contactInfo.deleteMany();
+    await prisma.room.deleteMany();
 
   // STUDIO CONTACT INFO
   await prisma.contactInfo.create({
@@ -19,6 +20,14 @@ async function main() {
       facebook: "Zen Space Studio",
       hours: "Esmaspäev - pühapäev, 7:00 - 23:00"
     }
+  });
+
+  // ROOM (ONLY 1)
+  await prisma.room.create({
+    data: {
+      name: "Zen Space Studio Room 1",
+      capacity: 15,
+    },
   });
 
   // SERVICES - SPACE - FEATURES
