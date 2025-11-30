@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Calendar } from "../components/ui/Calendar";
+import { WrapperCalendar } from "../components/WrapperCalendar";
 import {
   Card,
   CardContent,
@@ -182,7 +182,8 @@ export function Tunniplaan() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <Calendar
+                <WrapperCalendar
+                  calendarMode="timetable"
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}

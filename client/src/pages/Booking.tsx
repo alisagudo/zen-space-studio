@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calendar } from "../components/ui/Calendar";
+import { WrapperCalendar } from "../components/WrapperCalendar";
 import {
   Card,
   CardContent,
@@ -278,7 +278,8 @@ export function Booking() {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <div className="w-full max-w-[320px]">
-                  <Calendar
+                  <WrapperCalendar
+                    calendarMode="booking"
                     mode="single"
                     selected={selectedDate}
                     onSelect={(date) => date && setSelectedDate(date)}
@@ -289,14 +290,6 @@ export function Booking() {
                       available: (date) =>
                         getBookingsCountForDate(date) === 0 &&
                         date >= new Date(),
-                    }}
-                    modifiersClassNames={{
-                      fullyBooked:
-                        "bg-red-100 text-red-900 hover:bg-red-200",
-                      partiallyBooked:
-                        "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
-                      available:
-                        "bg-green-100 text-green-900 hover:bg-green-200",
                     }}
                   />
                 </div>

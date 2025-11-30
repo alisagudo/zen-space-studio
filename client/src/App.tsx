@@ -6,6 +6,8 @@ import { Services } from './pages/Teenused'
 import Tunniplaan from './pages/Tunniplaan'
 import { Contact } from './pages/Kontakt'
 import { Footer } from './pages/Footer' 
+import "./index.css";  
+import "./styles/daypicker.css";
 import './styles/progress.css';
 
 function App() {
