@@ -4,9 +4,13 @@ import { prisma } from "../src/prisma";
 
 async function main() {
   // CLEAR TABLES
+  await prisma.registration.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.booking.deleteMany();
+  await prisma.contactMessage.deleteMany();
   await prisma.service.deleteMany();
   await prisma.studioInfo.deleteMany();
-    await prisma.room.deleteMany();
+  await prisma.room.deleteMany();
 
   // STUDIO CONTACT INFO
   await prisma.studioInfo.create({

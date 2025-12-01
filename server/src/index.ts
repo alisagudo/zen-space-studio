@@ -34,14 +34,13 @@ app.listen(4000, () => {
 app.use("/studioinfo", studioInfoRoutes);
 app.use("/contactform", contactFormRoutes);
 app.use("/auth", authRoutes);
-app.use("/booking", bookingFormRoutes);
+app.use("/bookingForm", bookingFormRoutes);
 app.use("/bookings", bookingsRoutes);
 app.use("/events", eventsRoutes);
-app.use("/registration", registrationFormRoutes);
+app.use("/registrationform", registrationFormRoutes);
 app.use("/registrations", registrationsRoutes);
 app.use("/rooms", roomsRoutes);
 app.use("/services", servicesRoutes);
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
