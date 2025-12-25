@@ -237,7 +237,7 @@ export function Booking() {
   };
 
   return (
-    <section id="availability" className="py-20 bg-gray-50">
+    <section id="availability" className="py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-4xl md:text-5xl mb-4 text-gray-800">
@@ -277,7 +277,7 @@ export function Booking() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <div className="w-full max-w-[320px]">
+                <div className="w-full max-w-[255px]">
                   <WrapperCalendar
                     calendarMode="booking"
                     mode="single"

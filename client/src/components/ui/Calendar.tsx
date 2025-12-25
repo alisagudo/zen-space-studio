@@ -27,7 +27,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
 
-        head_cell: "text-muted-foreground rounded-md w-8 h-8 font-bold text-center",
+        head_cell: "text-muted-foreground font-bold text-center",
         cell: "text-center text-sm relative p-0",
 
         day: cn(
