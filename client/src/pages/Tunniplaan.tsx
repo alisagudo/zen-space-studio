@@ -283,9 +283,9 @@ export function Tunniplaan() {
                     })
                   ) : (
                     <div className="text-center py-8 text-gray-500">
-                      <p>See kuupäev on broneerimiseks saadaval!</p>
+                      <p>Sellele on vabu kohti!</p>
                       <p className="text-sm mt-2">
-                        Täitke paremal olev vorm registreeringu jaoks
+                        Täitke paremal olev vorm registreerimiseks
                       </p>
                     </div>
                   )}
