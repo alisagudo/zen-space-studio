@@ -211,7 +211,7 @@ export function Tunniplaan() {
                     ? `${bookingsForSelectedDate.length} broneering${
                         bookingsForSelectedDate.length > 1 ? "ut" : ""
                       } planeeritud`
-                    : "Sel kuupäeval pole broneeringuid"}
+                    : "Sellel treeningul pole vabu kohti"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -283,7 +283,7 @@ export function Tunniplaan() {
                     })
                   ) : (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Sellele on vabu kohti!</p>
+                      <p>Sellele treeninguleon vabu kohti!</p>
                       <p className="text-sm mt-2">
                         Täitke paremal olev vorm registreerimiseks
                       </p>
